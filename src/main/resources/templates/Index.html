@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+  <head>
+    <title>Control de productos</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <nav
+      class="navbar navbar-expand-lg navbar-light"
+      style="background-color: #e3f2fd"
+    >
+      <a class="navbar-brand" href="/">Control de productos</a>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link">
+              Bienvenido 
+            </a>
+          </li>
+        </ul>
+        <form th:action="@{/logout}" method="post" class="d-flex">
+          <input type="submit" class="btn btn-secondary" value="Cerrar sesión">
+        </form>
+      </div>
+      
+    </nav>
+    <div class="py-4 ml-5 mr-5">
+      <div class="card">
+        <h5 class="card-header">Lista de productos</h5>
+        <div class="card-body">
+          <div class="container text-center">
+            <form class="form-inline my-2 my-lg-0" th:action="@{/}">
+              <div class="form-group mb-2">
+                <label> Filtrar: </label> 
+              </div>
+              <div class="form-group mx-sm-3 mb-2">
+                <input
+                  type="text"
+                  name="palabraClave"
+                  class="form-control"
+                  id="palabraClave"
+                  th:value="${palabraClave}"
+                  placeholder="Digite el valor a buscar "
+                  required
+                />
+              </div>
+              <input type="submit" class="btn btn-secondary mb-2" value="Buscar" />
+              &nbsp;&nbsp;
+              <input type="button" class="btn btn-secondary mb-2" value="Limpiar" onclick="limpiarCampos()"/>
+              &nbsp;&nbsp;
+              <a th:href="@{/exportarPDF}" class="btn btn-info mb-2">Exportar a PDF</a>
+              &nbsp;&nbsp;
+              <a th:href="@{/exportarExcel}" class="btn btn-success mb-2">Exportar a Excel</a>
+              &nbsp;&nbsp;
+              <a sec:authorize="hasRole('ADMIN')" class="btn btn-primary mb-2" href="/nuevo">Agregar producto</a>
+            </form>
+            <br>
+      
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Código</th>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Marca</th>
+                  <th scope="col">Precio</th>
+                  <th scope="col">Cantidad</th>
+                  <th scope="col" sec:authorize="hasRole('ADMIN')">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="producto:${listaProductos}">
+                  <td th:text="${producto.codigo}"></td>
+                  <td th:text="${producto.nombre}"></td>
+                  <td th:text="${producto.marca}"></td>
+                  <td th:text="${producto.precio}"></td>
+                  <td th:text="${producto.cantidad}"></td>
+                  <td>
+                    <a
+                      sec:authorize="hasRole('ADMIN')"
+                      th:href="@{'/editar/' + ${producto.id}}"
+                      class="btn btn-warning"
+                      >Editar</a
+                    >
+                    &nbsp;
+                    <a
+                      sec:authorize="hasRole('ADMIN')"
+                      th:href="@{'/eliminar/' + ${producto.id}}"
+                      class="btn btn-danger"
+                      >Eliminar</a
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br />
+
+    <script type="text/javascript">
+        function limpiarCampos(){
+            window.location='/';
+        }
+    </script>
+  </body>
+</html>
